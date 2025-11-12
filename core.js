@@ -2,18 +2,16 @@
 // 建议你压缩/混淆（可不做）
 
 //console.log("[MyScript] core.js loaded v2025.11.10-1");
-// core.js
 
-// 给页面注入样式
-GM_addStyle(`
-  body {
-    border: 5px solid red !important;
-  }
-`);
-
-console.log("[core.js] 样式已注入");
 // 示例业务逻辑（你改成自己的）
 (function () {
+  GM_addStyle(`
+    .my-class {
+      background-color: yellow;
+    }
+  `);
+
+  console.log("[core.js] 已注入样式");
   "use strict";
 
   const STORAGE_KEY = "boc_helper_config";
@@ -233,5 +231,6 @@ console.log("[core.js] 样式已注入");
 
   getWorker();
 })();
+
 
 
