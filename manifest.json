@@ -2,11 +2,12 @@
   "version": "2025.11.10-1",
   "active": true,
   "window_start": "2025-11-10T08:00:00Z",
-  "window_end":   "2025-11-10T16:00:00Z",
+  "window_end":   "2025-11-20T16:00:00Z",
   "message": "⛔ 当前不在可用时间窗口，请稍后使用。",
   "min_loader_version": "1.0.0",
   "upgrade_message": "⚠️ 发现新版本，请重新安装 Loader。",
   "core_url": "https://linfengxu88.github.io/myweb/core.js"
 }
+
 
 
