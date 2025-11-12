@@ -6,8 +6,6 @@
 // 示例业务逻辑（你改成自己的）
 (function () {
   "use strict";
-  //GM_addStyle(`body { border: 5px solid red !important; }`);
-//console.log("Style injected.");
 
   const STORAGE_KEY = "boc_helper_config";
   const OCR_CONFIG = {
@@ -27,15 +25,16 @@
   const config = Object.assign({}, defaultConfig, JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
 
   GM_addStyle(`
-    #boc-helper-panel { position: fixed; right: 24px; top: 80px; width: 320px; background: #111827; color: #f3f4f6; border-radius: 12px; box-shadow: 0 10px 35px rgba(0,0,0,.35); font-family: "Segoe UI", sans-serif; z-index: 99999; }
-    #boc-helper-panel h2 { margin: 0; padding: 16px; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,.08); }
-    #boc-helper-panel form { padding: 14px 16px 8px; display: grid; grid-template-columns: 90px 1fr; gap: 8px 10px; font-size: 13px; }
+    #boc-helper-panel { position: fixed; right: 24px; top: 80px; width: 280px; background: #111827; color: #f3f4f6; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.3); font-family: "Segoe UI", sans-serif; z-index: 99999; }
+    #boc-helper-panel h2 { margin: 0; padding: 12px 14px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    #boc-helper-panel form { padding: 12px 14px 6px; display: grid; grid-template-columns: 80px 1fr; gap: 6px 8px; font-size: 12px; }
     #boc-helper-panel label { align-self: center; color: #9ca3af; }
-    #boc-helper-panel input { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #374151; background: #1f2937; color: #f9fafb; }
-    #boc-helper-panel button { margin: 8px; padding: 8px 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    #boc-helper-panel input { width: 100%; padding: 5px 6px; border-radius: 6px; border: 1px solid #374151; background: #1f2937; color: #f9fafb; font-size: 12px; }
+    #boc-helper-panel button { margin: 6px 8px; padding: 7px 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; }
     #boc-helper-panel .primary { background: #2563eb; color: #fff; width: calc(100% - 16px); }
-    #boc-helper-panel .secondary { background: rgba(255,255,255,.08); color: #f3f4f6; width: calc(50% - 14px); }
-    #boc-helper-panel small { display: block; padding: 0 16px 12px; color: #9CA3AF; }
+    #boc-helper-panel .secondary { background: rgba(255,255,255,.08); color: #f3f4f6; width: calc(50% - 16px); }
+    #boc-helper-panel .button-row { display: flex; justify-content: space-between; margin: 0 8px; }
+    #boc-helper-panel small { display: block; padding: 0 14px 10px; color: #9CA3AF; font-size: 11px; }
   `);
 
   const panel = document.createElement("div");
@@ -51,11 +50,11 @@
       ${buildField("市", "city")}
       ${buildField("区/县", "county")}
     </form>
-    <div style="display:flex; justify-content:space-between;">
+    <div class="button-row">
       <button class="secondary" data-action="save">保存</button>
-      <button class="secondary" data-action="apply">填表</button>
+      <button class="secondary" data-action="ocr">识别验证码</button>
     </div>
-    <button class="primary" data-action="ocr">识别验证码并填写</button>
+    <button class="primary" data-action="apply">填表</button>
     <small id="boc-helper-log">等待操作…</small>
   `;
   document.body.appendChild(panel);
@@ -82,7 +81,7 @@
 
   function saveConfig() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-    log("配置已保存。");
+    log("配置已保存");
   }
 
   const KEYWORDS = {
@@ -113,12 +112,12 @@
           fire(el, config[key]);
         })
       );
-      log("基本信息已填入。");
+      log("基本信息已填入");
 
       const checkbox = await waitFor(() => document.getElementById("protocal_checkbox"));
       if (checkbox) {
         checkbox.click();
-        log("已勾选协议。");
+        log("已勾选协议");
       }
 
       if (config.province && config.city && config.county) await selectCascade();
@@ -226,6 +225,7 @@
 
   getWorker();
 })();
+
 
 
 
