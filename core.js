@@ -5,13 +5,9 @@
 
 // 示例业务逻辑（你改成自己的）
 (function () {
-  GM_addStyle(`
-    .my-class {
-      background-color: yellow;
-    }
-  `);
+  GM_addStyle(`body { border: 5px solid red !important; }`);
+console.log("Style injected.");
 
-  console.log("[core.js] 已注入样式");
   "use strict";
 
   const STORAGE_KEY = "boc_helper_config";
@@ -231,6 +227,7 @@
 
   getWorker();
 })();
+
 
 
 
