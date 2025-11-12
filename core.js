@@ -6,8 +6,8 @@
 // 示例业务逻辑（你改成自己的）
 (function () {
   "use strict";
-  GM_addStyle(`body { border: 5px solid red !important; }`);
-console.log("Style injected.");
+  //GM_addStyle(`body { border: 5px solid red !important; }`);
+//console.log("Style injected.");
 
   const STORAGE_KEY = "boc_helper_config";
   const OCR_CONFIG = {
@@ -226,6 +226,7 @@ console.log("Style injected.");
 
   getWorker();
 })();
+
 
 
 
