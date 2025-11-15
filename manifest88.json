@@ -6,6 +6,7 @@
   "message": "⛔ 当前不在可用时间窗口，请稍后使用。",
   "min_loader_version": "1.0.0",
   "upgrade_message": "⚠️ 发现新版本，请重新安装 Loader。",
-  "core_url": "https://<你的用户名>.github.io/userscript-host/core88.js"
+  "core_url": "https://linfengxu88.github.io/userscript-host/core88.js"
 }
+
 
