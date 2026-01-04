@@ -8,11 +8,10 @@
         if (!json || !json.list) return json;
         json.list.forEach(item => {
             // 强制修改目标币种（productId: BJJ202501）
-            if (item.productId === "BJJ202501") {
-                item.endDate = "2026/12/31";
-                if (item.provinceList) item.provinceList.forEach(p => p.bankStartTime = "000000");
+             item.endDate = "2026/12/31";
+             if (item.provinceList) item.provinceList.forEach(p => p.bankStartTime = "000000");
             }
-        });
+        );
         return json;
     };
 
