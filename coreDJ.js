@@ -9,7 +9,7 @@ setTimeout(() => {
         if (!json || !json.list) return json;
         json.list.forEach(item => {
             // 强制修改目标币种（productId: BJJ202501）
-             item.endDate = "2026/12/31";
+             item.startDate = "2026/01/08";
              if (item.provinceList) item.provinceList.forEach(p => p.bankStartTime = "000000");
             }
         );
@@ -71,7 +71,7 @@ const PANEL_POS_KEY = "boc_helper_panel_pos";
 const MAX_PROFILES = 10; // ✅ 5 -> 10
 
 const GUIDE_TEXT =
-  "使用方法，进去后等待图形验证码自动填写完毕后，按一下键盘上的回车键（enter）会自动填写好你所保存的所有信息，并且会自动获取短信验证码，并自动点击输入框，你只需要等待手机验证码发过来填写即可，填完按回车键即完成预约。切记回车键不要重复点击，第一次是填信息，第二次是提交预约";
+  "！！！提前进入方式：自动化完成或者自己点击查询再点预约也能提前进网页，配合自动化程序使用，提前进入之前先选好每个网页所需信息配置，需要提前录入所需网点以及基本信息，网点必须是准确查找，网点哪里是什么就填什么，不要错字，如果要指定网点可以自己自行修改网点信息，到预约时间点一键提交程序会自动完成识别验证码，短信码，以及提交按钮，注意网页间是串行，速度只取决与接收验证码速度，该网页信息完成预约会立即跳到下一个网页";
 
 const defaultConfig = {
   name: "",
@@ -382,7 +382,7 @@ panel.innerHTML = `
     </div>
 
     <div class="boc-btn-row">
-      <button class="boc-btn" data-action="apply">填表</button>
+      <button class="boc-btn" data-action="apply" id="tianbiao">填表</button>
       <button class="boc-btn primary" data-action="ocr">识别验证码并填写</button>
     </div>
 
@@ -691,75 +691,7 @@ chooseBranchBtn.click();
     }
     return tessWorkerPromise;
   }
-
-  async function captureCaptchaDataURL() {
-    const img = await waitFor(() => document.getElementById("captcha"));
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const width = img.naturalWidth || img.width;
-      const height = img.naturalHeight || img.height;
-      if (!width || !height) return reject(new Error("验证码尺寸异常"));
-
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
-
-      try {
-        resolve(canvas.toDataURL("image/png"));
-      } catch (err) {
-        reject(new Error("验证码转 dataURL 失败：" + err.message));
-      }
-    });
-  }
-
-  async function runOcr() {
-     const API_URL = "http://127.0.0.1:8080/ocr";
-  const TIMEOUT = 1000;
-  // 你的 base64 获取逻辑（原样保留，只包成函数）
-  async function getCaptchaBase64() {
-    const img = document.getElementById('captcha');
-    if (!img) throw new Error('captcha not found');
-
-    img.src = img.src.replace(/validation\d+/, 'validation' + Date.now());
-    await new Promise(r => (img.onload = r));
-
-    const blob = await (await fetch(img.src, { credentials: 'include' })).blob();
-    return await new Promise(r => {
-      const fr = new FileReader();
-      fr.onload = () => r(fr.result); // data:image/...;base64,...
-      fr.readAsDataURL(blob);
-    });
-  }
-
-  // GM_xmlhttpRequest 包一层 Promise，方便 async/await
-  function postOCR(payload) {
-    return new Promise((resolve, reject) => {
-      GM_xmlhttpRequest({
-        method: 'POST',
-        url: API_URL,
-        headers: { 'Content-Type': 'application/json' },
-        data: JSON.stringify(payload),
-        timeout: TIMEOUT,
-        onload: (resp) => {
-          try { resolve(JSON.parse(resp.responseText)); }
-          catch { reject(new Error("响应不是JSON: " + (resp.responseText || "").slice(0, 200))); }
-        },
-        onerror: () => reject(new Error("GM_xhr onerror")),
-        ontimeout: () => reject(new Error("GM_xhr timeout")),
-      });
-    });
-  }
-      const base64 = await getCaptchaBase64();
-      const result = await postOCR({ image_base64: base64 }); // ✅ base64 进入 POST body
-      document.getElementById("txt_captcha_79449").value = result.code;
-      //获取验证码点击
-    const captchaBtn = await waitFor(() => document.getElementById("get-sms-input"));
-    captchaBtn.click();
-
-  }
-
-  const waitFor = (resolver, timeout = 8000, interval = 80) =>
+   const waitFor = (resolver, timeout = 8000, interval = 80) =>
     new Promise((resolve, reject) => {
       const start = performance.now();
       (function tick() {
@@ -769,112 +701,5 @@ chooseBranchBtn.click();
         setTimeout(tick, interval);
       })();
     });
-
-  const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
-  /*function log(msg) {
-    document.getElementById("boc-helper-log").textContent = msg;
-    console.log("[BOC Helper]", msg);
-  }*/
-
-  renderFields();
-  getWorker();
-    // -------------------------- 核心配置（仅保留必要项） --------------------------
-    const LOCAL_API = "http://localhost:5000/webhook/sms/list"; // 本地Flask接口
-    const REFRESH_INTERVAL = 500; // 200ms刷新一次（可改1000ms降低频率）
-    const AUTO_COPY_LATEST_CODE = true; // 开启自动复制
-    let lastCopiedCode = ""; // 记录上一次复制的验证码（防重复）
-
-    // -------------------------- 核心：筛选银行短信 + 提取6位验证码 --------------------------
-    // 筛选含「银行」的短信
-    function filterBankSms(smsList) {
-        return smsList.filter(sms => /银行/.test(sms));
-    }
-
-    // 提取银行短信中的6位验证码
-    function extractBankCode(sms) {
-        if (!/银行/.test(sms)) return "";
-        const codeMatch = sms.match(/(验证码|校验码|交易码|授权码|动态密码)[:：]\s*(\d{6})/) || sms.match(/\d{6}/);
-        return codeMatch ? (codeMatch[2] || codeMatch[0]) : "";
-    }
-
-    // -------------------------- 自动填充验证码到输入框 --------------------------
-    function fillCodeToInput(code) {
-        // 定位验证码输入框（按placeholder匹配）
-        const input = document.querySelector('input[placeholder="手机验证码"]');
-        if (input) {
-            input.value = code;
-            // 触发input事件，确保页面识别输入（如按钮解锁、表单校验）
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    }
-
-    // -------------------------- 轻量提示框（可选，提示填充成功） --------------------------
-    function showToast(msg) {
-        const toast = document.createElement("div");
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4CAF50;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
-            z-index: 9999999;
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        `;
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.style.opacity = 1, 10);
-        setTimeout(() => {
-            toast.style.opacity = 0;
-            setTimeout(() => document.body.removeChild(toast), 300);
-        }, 3000); // 提示框显示2秒后消失
-    }
-
-    // -------------------------- 核心：拉取本地短信并处理 --------------------------
-    function fetchSms() {
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: LOCAL_API,
-            timeout: 500,
-            onload: function(res) {
-                if (res.status !== 200) return; // 接口失败直接忽略（无面板，无需提示）
-                try {
-                    const data = JSON.parse(res.responseText);
-                    if (data.code !== 200) return;
-
-                    // 筛选银行短信 → 取最新一条 → 提取验证码
-                    const bankSmsList = filterBankSms(data.data);
-                    if (bankSmsList.length === 0) return; // 无银行短信则退出
-
-                    const latestBankSms = bankSmsList[bankSmsList.length - 1]; // 最新短信
-                    const latestCode = extractBankCode(latestBankSms);
-
-                    // 仅当验证码有效且未复制过时，执行复制+填充
-                    if (latestCode && latestCode !== lastCopiedCode) {
-                        if (AUTO_COPY_LATEST_CODE) {
-                            GM_setClipboard(latestCode); // 自动复制到剪贴板
-                        }
-                        fillCodeToInput(latestCode); // 填充到输入框
-                        lastCopiedCode = latestCode; // 标记已复制，防重复
-                        showToast(`✅ 自动填充银行验证码：${latestCode}`); // 提示填充成功
-                    }
-                } catch (e) {
-                    console.log("验证码处理失败：", e); // 仅控制台打印错误，不干扰页面
-                }
-            },
-            onerror: function() {
-                // 接口连接失败（如Flask未启动），无提示（避免打扰）
-                console.log("无法连接本地Flask服务，请检查服务是否启动");
-            }
-        });
-    }
-
-    // -------------------------- 启动脚本 --------------------------
-    fetchSms(); // 初始化拉取一次
-    setInterval(fetchSms, REFRESH_INTERVAL); // 定时循环拉取
+   const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 })();
