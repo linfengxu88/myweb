@@ -1,7 +1,8 @@
 {
   "showPopup": true,
-  "title": "点击链接加入群聊【畅玩三国】：",
-  "desc": "一起自律学习，提升效率",
+  "title": "加入学习群",
+  "desc": "资料免费领取",
   "buttonText": "立即加入",
-  "url": "https://qm.qq.com/q/MLkj1ySZM"
+  "url": "https://qm.qq.com/xxx",
+  "image": "https://你的图地址.png"
 }
