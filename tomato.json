@@ -2,6 +2,6 @@
   "appTitle": "超级专注钟",
   "focusMinutes": 50,
   "breakMinutes": 10,
-  "showFocusControl": false,
-  "notice": "今天先专注50分钟，别摸鱼"
+  "showFocusControl": true,
+  "notice": "魔兽世界12341"
 }
