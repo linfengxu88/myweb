@@ -1,0 +1,7 @@
+{
+  "appTitle": "番茄时钟",
+  "focusMinutes": 30,
+  "breakMinutes": 8,
+  "showFocusControl": true,
+  "notice": "群号12345678"
+}
