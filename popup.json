@@ -6,5 +6,5 @@
   "url": "https://qm.qq.com/q/eZTTVNsuqc",
   "image": "https://raw.githubusercontent.com/linfengxu88/myweb/main/popup.png",
   "question": "多少等级可以打团本",
-  "answer": "60"
+  "answers": ["60","65"]
 }
